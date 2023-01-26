@@ -1,3 +1,4 @@
+const { response } = require('express')
 const express = require('express')
 const app = express()
 
@@ -54,6 +55,28 @@ app.get('/info', (req, res) => {
     `<p>Phonebook has info for ${persons.length} people</p>` +
     `<p>${new Date()}</p>`
     )
+})
+
+const generateId = () => {
+  return Math.floor(Math.random() * 1000000) + persons.length
+}
+
+app.post('/api/persons', (req, res) => {
+  const body = req.body
+  if (!body.name) {
+    return res.status(400).json({ 
+      error: 'name missing' 
+    })
+  }
+
+  const person = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  }
+
+  persons = persons.concat(person)
+  res.json(person)
 })
 
 const PORT = 3001
