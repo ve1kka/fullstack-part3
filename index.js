@@ -9,7 +9,7 @@ const { response } = require('express')
 
 
 
-morgan.token('content', (req, res) => {
+morgan.token('content', (req) => {
   return JSON.stringify(req.body)
 })
 
@@ -31,8 +31,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } else if (error.name === 'ValidationError') {    
-    return response.status(400).json({ error: error.message })  
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error)
@@ -62,7 +62,7 @@ app.get('/api/persons/:id', (req, res, next) => {
 
 app.delete('/api/persons/:id', (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
-    .then(_result => {
+    .then(() => {
       res.status(204).end()
     })
     .catch(error => next(error))
@@ -72,7 +72,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 app.get('/info', (req, res) => {
   Person.find({}).then(persons => {
     res.send(
-    `<p>Phonebook has info for ${persons.length} people</p>` +
+      `<p>Phonebook has info for ${persons.length} people</p>` +
     `<p>${new Date()}</p>`
     )
   })
@@ -83,14 +83,14 @@ app.post('/api/persons', (req, res, next) => {
   const body = req.body
 
   if (!body.name) {
-    return res.status(400).json({ 
-      error: 'name missing' 
+    return res.status(400).json({
+      error: 'name missing'
     })
   }
 
   if (!body.number) {
-    return res.status(400).json({ 
-      error: 'number missing' 
+    return res.status(400).json({
+      error: 'number missing'
     })
   }
 
@@ -106,7 +106,7 @@ app.post('/api/persons', (req, res, next) => {
 })
 
 
-app.put("/api/persons/:id", (req, res, next) => {
+app.put('/api/persons/:id', (req, res, next) => {
   const body = req.body
 
   const person = {
@@ -115,9 +115,9 @@ app.put("/api/persons/:id", (req, res, next) => {
   }
 
   Person.findByIdAndUpdate(
-    req.params.id, 
-    person, 
-    { new: true, runValidators: true, context: "query" }
+    req.params.id,
+    person,
+    { new: true, runValidators: true, context: 'query' }
   )
     .then((updatedPerson) => {
       res.json(updatedPerson)
